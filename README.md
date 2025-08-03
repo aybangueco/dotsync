@@ -8,6 +8,9 @@ I've been using Hyprland with my own custom dotfiles configuration. I've been en
 some changes in my dotfiles, I find it a hassle to synchronize those changes, because I will have to navigate on each directory
 and files to sync them on my repository vice versa. With this CLI i built, I aim to eliminate those repetitive steps because i am lazy.
 
+## Example
+Here is some config [example](https://github.com/aybangueco/hyprdots/blob/main/.config/dotsync.json)
+
 ## Installation
 
 ```bash

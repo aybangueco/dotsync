@@ -8,6 +8,7 @@ import (
 	"os/exec"
 
 	"github.com/aybangueco/dotsync/internal/config"
+	"github.com/aybangueco/dotsync/internal/helpers"
 	"github.com/urfave/cli/v3"
 )
 
@@ -39,15 +40,20 @@ var SyncCommand = &cli.Command{
 				targetDoesExist = false
 			}
 
+			target, err := helpers.ExpandPath(c.Target)
+			if err != nil {
+				return err
+			}
+
 			if targetDoesExist {
 				if c.IsDirectory {
-					rmDir := exec.Command("rm", "-r", c.Target)
+					rmDir := exec.Command("rm", "-r", target)
 
 					if output, err := rmDir.CombinedOutput(); err != nil {
 						return fmt.Errorf("rm -r failed: %v\nOutput: %s", err, string(output))
 					}
 				} else {
-					rm := exec.Command("rm", c.Target)
+					rm := exec.Command("rm", target)
 
 					if output, err := rm.CombinedOutput(); err != nil {
 						return fmt.Errorf("rm failed: %v\nOutput: %s", err, string(output))
@@ -56,7 +62,7 @@ var SyncCommand = &cli.Command{
 			}
 
 			if c.IsDirectory && !targetDoesExist {
-				mkDir := exec.Command("mkdir", "-p", c.Target)
+				mkDir := exec.Command("mkdir", "-p", target)
 
 				if output, err := mkDir.CombinedOutput(); err != nil {
 					return fmt.Errorf("mkdir -p failed: %v\nOutput: %s", err, string(output))
@@ -64,12 +70,12 @@ var SyncCommand = &cli.Command{
 			}
 
 			if c.IsDirectory {
-				cp := exec.Command("cp", "-r", c.Source, c.Target)
+				cp := exec.Command("cp", "-r", c.Source, target)
 				if output, err := cp.CombinedOutput(); err != nil {
 					return fmt.Errorf("cp -r failed: %v\nOutput: %s", err, string(output))
 				}
 			} else {
-				cp := exec.Command("cp", c.Source, c.Target)
+				cp := exec.Command("cp", c.Source, target)
 				if output, err := cp.CombinedOutput(); err != nil {
 					return fmt.Errorf("cp failed: %v\nOutput: %s", err, string(output))
 				}

@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/aybangueco/dotsync/internal/config"
 	"github.com/aybangueco/dotsync/internal/helpers"
@@ -14,24 +12,25 @@ import (
 
 var RemoveCommand = &cli.Command{
 	Name:  "remove",
-	Usage: "The opposite of sync command, it removes targeted files and directories",
+	Usage: "The opposite of sync command, it removes files and directories from target",
 	Action: func(ctx context.Context, c *cli.Command) error {
 		conf, err := config.ReadConfig()
 		if err != nil {
 			return err
 		}
 
-		for _, c := range conf {
-			if c.Target == "" {
-				return fmt.Errorf("%s's target path must not be empty", c.Source)
-			}
+		if err = helpers.ValidateConfig(conf); err != nil {
+			return err
+		}
 
-			if c.Source == "" {
-				return errors.New("one of the sources are empty, either remove it or add some source")
+		for _, c := range conf {
+			target, err := helpers.ExpandPath(c.Target)
+			if err != nil {
+				return err
 			}
 
 			var targetDoesExist bool
-			_, err := os.Stat(c.Target)
+			_, err = os.Stat(target)
 			if err == nil {
 				targetDoesExist = true
 			}
@@ -40,25 +39,18 @@ var RemoveCommand = &cli.Command{
 				targetDoesExist = false
 			}
 
-			target, err := helpers.ExpandPath(c.Target)
-			if err != nil {
-				return err
-			}
+			fmt.Printf("target: %s exist: %t \n", target, targetDoesExist)
 
+			// Remove existing file and directory
 			if targetDoesExist {
-				if c.IsDirectory {
-					rmDir := exec.Command("rm", "-r", target)
+				fmt.Printf("Removing %s from %s \n", c.Source, target)
 
-					if output, err := rmDir.CombinedOutput(); err != nil {
-						return fmt.Errorf("rm -r failed: %v\nOutput: %s", err, string(output))
-					}
-				} else {
-					rm := exec.Command("rm", target)
-
-					if output, err := rm.CombinedOutput(); err != nil {
-						return fmt.Errorf("rm failed: %v\nOutput: %s", err, string(output))
-					}
+				err = helpers.RemoveFromTarget(c, target)
+				if err != nil {
+					return err
 				}
+			} else {
+				fmt.Printf("%s from %s does not exist", c.Source, fmt.Sprintf("%s/%s", c.Target, c.Source))
 			}
 		}
 

@@ -9,7 +9,8 @@ some changes in my dotfiles, I find it a hassle to synchronize those changes, be
 and files to sync them on my repository vice versa. With this CLI i built, I aim to eliminate those repetitive steps because i am lazy.
 
 ## Example
-Here is some config [example](https://github.com/aybangueco/hyprdots/blob/main/.config/dotsync.json)
+
+Here is some config [example](https://github.com/aybangueco/hyprdots/blob/main/.config/dotsync.json) from my dotfile repository.
 
 ## Installation
 
@@ -29,10 +30,26 @@ dotsync init
 
 ### Sync
 
-Sync files and directory on specified target path.
+Sync files and directory on specified target path from your local repository.
 
 ```bash
 dotsync sync
+```
+
+### Remove
+
+Remove files and directory on specified target path.
+
+```bash
+dotsync remove
+```
+
+### Reverse
+
+Equivalent of sync command, it sync your files & directories from target path to your local repository
+
+```bash
+dotsync reverse
 ```
 
 ## Contributing

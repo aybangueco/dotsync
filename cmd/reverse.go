@@ -55,12 +55,12 @@ var ReverseCommand = &cli.Command{
 
 			// Copy the file or directory to the specified target, this assumes the directory or file is deleted or not existing
 			if c.IsDirectory {
-				cp := exec.Command("cp", "-r", fmt.Sprintf("%s/%s", target, c.Source), c.Source)
+				cp := exec.Command("cp", "-r", fmt.Sprintf("%s/%s", target, c.Source), ".")
 				if output, err := cp.CombinedOutput(); err != nil {
 					return fmt.Errorf("Error copying directory: %v\nOutput: %s", err, string(output))
 				}
 			} else {
-				cp := exec.Command("cp", fmt.Sprintf("%s/%s", target, c.Source), c.Source)
+				cp := exec.Command("cp", fmt.Sprintf("%s/%s", target, c.Source), ".")
 				if output, err := cp.CombinedOutput(); err != nil {
 					return fmt.Errorf("Error copying file: %v\nOutput: %s", err, string(output))
 				}

@@ -11,7 +11,7 @@ var VersionCommand = &cli.Command{
 	Name:  "version",
 	Usage: "Display's current version number",
 	Action: func(ctx context.Context, c *cli.Command) error {
-		fmt.Println("DotSync v1.0.0")
+		fmt.Println("DotSync v1.0.5")
 		return nil
 	},
 }

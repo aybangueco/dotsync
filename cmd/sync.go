@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -21,17 +20,19 @@ var SyncCommand = &cli.Command{
 			return err
 		}
 
-		for _, c := range conf {
-			if c.Target == "" {
-				return fmt.Errorf("%s's target path must not be empty", c.Source)
-			}
+		if err = helpers.ValidateConfig(conf); err != nil {
+			return err
+		}
 
-			if c.Source == "" {
-				return errors.New("one of the sources are empty, either remove it or add some source")
+		// File operations
+		for _, c := range conf {
+			target, err := helpers.ExpandPath(c.Target)
+			if err != nil {
+				return err
 			}
 
 			var targetDoesExist bool
-			_, err := os.Stat(c.Target)
+			_, err = os.Stat(target)
 			if err == nil {
 				targetDoesExist = true
 			}
@@ -40,44 +41,28 @@ var SyncCommand = &cli.Command{
 				targetDoesExist = false
 			}
 
-			target, err := helpers.ExpandPath(c.Target)
-			if err != nil {
-				return err
-			}
+			fmt.Printf("target: %s exist: %t \n", target, targetDoesExist)
 
+			// Remove existing file and directory
 			if targetDoesExist {
-				if c.IsDirectory {
-					rmDir := exec.Command("rm", "-r", target)
+				fmt.Printf("Removing %s from %s \n", c.Source, target)
 
-					if output, err := rmDir.CombinedOutput(); err != nil {
-						return fmt.Errorf("rm -r failed: %v\nOutput: %s", err, string(output))
-					}
-				} else {
-					rm := exec.Command("rm", target)
-
-					if output, err := rm.CombinedOutput(); err != nil {
-						return fmt.Errorf("rm failed: %v\nOutput: %s", err, string(output))
-					}
+				err = helpers.RemoveFromTarget(c, target)
+				if err != nil {
+					return err
 				}
 			}
 
-			if c.IsDirectory && !targetDoesExist {
-				mkDir := exec.Command("mkdir", "-p", target)
-
-				if output, err := mkDir.CombinedOutput(); err != nil {
-					return fmt.Errorf("mkdir -p failed: %v\nOutput: %s", err, string(output))
-				}
-			}
-
+			// Copy the file or directory to the specified target, this assumes the directory or file is deleted or not existing
 			if c.IsDirectory {
 				cp := exec.Command("cp", "-r", c.Source, target)
 				if output, err := cp.CombinedOutput(); err != nil {
-					return fmt.Errorf("cp -r failed: %v\nOutput: %s", err, string(output))
+					return fmt.Errorf("Error copying directory: %v\nOutput: %s", err, string(output))
 				}
 			} else {
 				cp := exec.Command("cp", c.Source, target)
 				if output, err := cp.CombinedOutput(); err != nil {
-					return fmt.Errorf("cp failed: %v\nOutput: %s", err, string(output))
+					return fmt.Errorf("Error copying file: %v\nOutput: %s", err, string(output))
 				}
 			}
 		}

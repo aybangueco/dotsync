@@ -52,3 +52,21 @@ func RemoveFromTarget(c config.DotSyncConfig, target string) error {
 
 	return nil
 }
+
+func RemoveFromSource(c config.DotSyncConfig) error {
+	if c.IsDirectory {
+		rmDir := exec.Command("rm", "-rf", c.Source)
+		output, err := rmDir.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("Error removing directory: %v\nOutput: %s", err, string(output))
+		}
+	} else {
+		rm := exec.Command("rm", c.Source)
+		output, err := rm.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("Error removing file: %v\nOutput: %s", err, string(output))
+		}
+	}
+
+	return nil
+}

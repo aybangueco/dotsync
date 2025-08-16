@@ -16,6 +16,7 @@ func main() {
 		Commands: []*cli.Command{
 			cmd.InitCommand,
 			cmd.SyncCommand,
+			cmd.ReverseCommand,
 			cmd.RemoveCommand,
 			cmd.VersionCommand,
 		},

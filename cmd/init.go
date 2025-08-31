@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aybangueco/dotsync/internal/config"
 	"github.com/urfave/cli/v3"
+
+	"github.com/aybangueco/dotsync/internal/config"
 )
 
 var InitCommand = &cli.Command{

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/urfave/cli/v3"
+
 	"github.com/aybangueco/dotsync/internal/config"
 	"github.com/aybangueco/dotsync/internal/helpers"
-	"github.com/urfave/cli/v3"
 )
 
 var RemoveCommand = &cli.Command{
@@ -24,10 +25,12 @@ var RemoveCommand = &cli.Command{
 		}
 
 		for _, c := range conf {
-			target, err := helpers.ExpandPath(c.Target)
+			targetDir, err := helpers.ExpandPath(c.Target)
 			if err != nil {
 				return err
 			}
+
+			target := helpers.CombinePath(targetDir, c.Source)
 
 			var targetDoesExist bool
 			_, err = os.Stat(target)
@@ -53,6 +56,8 @@ var RemoveCommand = &cli.Command{
 				fmt.Printf("%s from %s does not exist", c.Source, fmt.Sprintf("%s/%s", c.Target, c.Source))
 			}
 		}
+
+		fmt.Println("Removed successfully")
 
 		return nil
 	},

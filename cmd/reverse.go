@@ -6,9 +6,10 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/urfave/cli/v3"
+
 	"github.com/aybangueco/dotsync/internal/config"
 	"github.com/aybangueco/dotsync/internal/helpers"
-	"github.com/urfave/cli/v3"
 )
 
 var ReverseCommand = &cli.Command{
@@ -26,10 +27,12 @@ var ReverseCommand = &cli.Command{
 
 		// File operations
 		for _, c := range conf {
-			target, err := helpers.ExpandPath(c.Target)
+			targetDir, err := helpers.ExpandPath(c.Target)
 			if err != nil {
 				return err
 			}
+
+			target := helpers.CombinePath(targetDir, c.Source)
 
 			var targetDoesExist bool
 			_, err = os.Stat(target)
@@ -57,15 +60,17 @@ var ReverseCommand = &cli.Command{
 			if c.IsDirectory {
 				cp := exec.Command("cp", "-r", fmt.Sprintf("%s/%s", target, c.Source), ".")
 				if output, err := cp.CombinedOutput(); err != nil {
-					return fmt.Errorf("Error copying directory: %v\nOutput: %s", err, string(output))
+					return fmt.Errorf("error copying directory: %v\nOutput: %s", err, string(output))
 				}
 			} else {
 				cp := exec.Command("cp", fmt.Sprintf("%s/%s", target, c.Source), ".")
 				if output, err := cp.CombinedOutput(); err != nil {
-					return fmt.Errorf("Error copying file: %v\nOutput: %s", err, string(output))
+					return fmt.Errorf("error copying file: %v\nOutput: %s", err, string(output))
 				}
 			}
 		}
+
+		fmt.Println("Reversed successfully")
 
 		return nil
 	},

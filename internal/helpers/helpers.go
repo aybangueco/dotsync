@@ -21,6 +21,12 @@ func ExpandPath(path string) (string, error) {
 	return path, nil
 }
 
+func CombinePath(targetDir, source string) string {
+	combinedPath := filepath.Join(targetDir, source)
+
+	return combinedPath
+}
+
 func ValidateConfig(conf []config.DotSyncConfig) error {
 	for _, c := range conf {
 		if c.Target == "" {
@@ -37,16 +43,16 @@ func ValidateConfig(conf []config.DotSyncConfig) error {
 
 func RemoveFromTarget(c config.DotSyncConfig, target string) error {
 	if c.IsDirectory {
-		rmDir := exec.Command("rm", "-rf", fmt.Sprintf("%s/%s", target, c.Source))
+		rmDir := exec.Command("rm", "-rf", target)
 		output, err := rmDir.CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("Error removing directory: %v\nOutput: %s", err, string(output))
+			return fmt.Errorf("error removing directory: %v\nOutput: %s", err, string(output))
 		}
 	} else {
-		rm := exec.Command("rm", fmt.Sprintf("%s/%s", target, c.Source))
+		rm := exec.Command("rm", target)
 		output, err := rm.CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("Error removing file: %v\nOutput: %s", err, string(output))
+			return fmt.Errorf("error removing file: %v\nOutput: %s", err, string(output))
 		}
 	}
 
@@ -58,13 +64,13 @@ func RemoveFromSource(c config.DotSyncConfig) error {
 		rmDir := exec.Command("rm", "-rf", c.Source)
 		output, err := rmDir.CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("Error removing directory: %v\nOutput: %s", err, string(output))
+			return fmt.Errorf("error removing directory: %v\nOutput: %s", err, string(output))
 		}
 	} else {
 		rm := exec.Command("rm", c.Source)
 		output, err := rm.CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("Error removing file: %v\nOutput: %s", err, string(output))
+			return fmt.Errorf("error removing file: %v\nOutput: %s", err, string(output))
 		}
 	}
 

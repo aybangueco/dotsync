@@ -32,6 +32,14 @@ var ReverseCommand = &cli.Command{
 				return err
 			}
 
+			_, err = os.Stat(targetDir)
+			if err != nil {
+				err = helpers.CreateDirectory(targetDir)
+				if err != nil {
+					return err
+				}
+			}
+
 			target := helpers.CombinePath(targetDir, c.Source)
 
 			var targetDoesExist bool
@@ -58,12 +66,12 @@ var ReverseCommand = &cli.Command{
 
 			// Copy the file or directory to the specified target, this assumes the directory or file is deleted or not existing
 			if c.IsDirectory {
-				cp := exec.Command("cp", "-r", fmt.Sprintf("%s/%s", target, c.Source), ".")
+				cp := exec.Command("cp", "-r", target, ".")
 				if output, err := cp.CombinedOutput(); err != nil {
 					return fmt.Errorf("error copying directory: %v\nOutput: %s", err, string(output))
 				}
 			} else {
-				cp := exec.Command("cp", fmt.Sprintf("%s/%s", target, c.Source), ".")
+				cp := exec.Command("cp", target, ".")
 				if output, err := cp.CombinedOutput(); err != nil {
 					return fmt.Errorf("error copying file: %v\nOutput: %s", err, string(output))
 				}

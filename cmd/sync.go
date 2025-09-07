@@ -32,6 +32,14 @@ var SyncCommand = &cli.Command{
 				return err
 			}
 
+			_, err = os.Stat(targetDir)
+			if err != nil {
+				err = helpers.CreateDirectory(targetDir)
+				if err != nil {
+					return err
+				}
+			}
+
 			target := helpers.CombinePath(targetDir, c.Source)
 
 			var targetDoesExist bool

@@ -53,7 +53,7 @@ var RemoveCommand = &cli.Command{
 					return err
 				}
 			} else {
-				fmt.Printf("%s from %s does not exist", c.Source, fmt.Sprintf("%s/%s", c.Target, c.Source))
+				fmt.Printf("%s from %s does not exist", c.Source, target)
 			}
 		}
 

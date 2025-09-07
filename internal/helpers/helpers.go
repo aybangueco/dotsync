@@ -27,6 +27,16 @@ func CombinePath(targetDir, source string) string {
 	return combinedPath
 }
 
+func CreateDirectory(targetDir string) error {
+	mkdir := exec.Command("mkdir", "-p", targetDir)
+	output, err := mkdir.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error creating directory: %v\nOutput: %s", err, string(output))
+	}
+
+	return nil
+}
+
 func ValidateConfig(conf []config.DotSyncConfig) error {
 	for _, c := range conf {
 		if c.Target == "" {

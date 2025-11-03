@@ -13,7 +13,7 @@ import (
 
 var RemoveCommand = &cli.Command{
 	Name:  "remove",
-	Usage: "The opposite of sync command, it removes files and directories from target",
+	Usage: "The opposite of sync command, it removes files and directories from specified directory",
 	Action: func(ctx context.Context, c *cli.Command) error {
 		conf, err := config.ReadConfig()
 		if err != nil {

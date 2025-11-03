@@ -24,7 +24,7 @@ var InitCommand = &cli.Command{
 			return err
 		}
 
-		fmt.Println("Dotsync configuration has been added")
+		fmt.Println("Dotsync configuration generated")
 
 		return nil
 	},

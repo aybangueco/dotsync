@@ -14,7 +14,7 @@ import (
 
 var SyncCommand = &cli.Command{
 	Name:  "sync",
-	Usage: "Sync your current files and directory to specified target path",
+	Usage: "Sync your current files and directory to specified directory",
 	Action: func(ctx context.Context, c *cli.Command) error {
 		conf, err := config.ReadConfig()
 		if err != nil {
@@ -77,6 +77,8 @@ var SyncCommand = &cli.Command{
 				}
 			}
 		}
+
+		fmt.Println("Synced successfully")
 
 		return nil
 	},

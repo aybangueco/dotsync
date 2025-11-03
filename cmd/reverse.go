@@ -14,7 +14,7 @@ import (
 
 var ReverseCommand = &cli.Command{
 	Name:  "reverse",
-	Usage: "Equivalent of sync command, ",
+	Usage: "Sync your files and directory from specified directory",
 	Action: func(ctx context.Context, c *cli.Command) error {
 		conf, err := config.ReadConfig()
 		if err != nil {
@@ -78,7 +78,7 @@ var ReverseCommand = &cli.Command{
 			}
 		}
 
-		fmt.Println("Reversed successfully")
+		fmt.Println("Reversed sync successfully")
 
 		return nil
 	},
